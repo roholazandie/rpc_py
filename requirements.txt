@@ -1,0 +1,3 @@
+wikipedia
+flask
+pymongo==3.10.1
