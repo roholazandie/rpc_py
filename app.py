@@ -11,11 +11,12 @@ proxy = ServerProxy('http://localhost:3000')
 
 if __name__ == "__main__":
     print("Initiating Flask REST Service...")  
-    app = Flask(__name__)  
+    app = Flask(__name__)
     
     @app.route('/wiki', methods=['POST'])
     def ask_wiki():
         r = request.get_json()
+        print(r)
         response = make_response(jsonify({"response": proxy.wiki_summary(r["question"])}))
         return response
 
@@ -31,7 +32,7 @@ if __name__ == "__main__":
         response = make_response(jsonify({"response": proxy.is_even(4)}))
         return response
 
-    app.run(host='127.0.0.1', port=PORT, debug=True)
+    app.run(host='127.0.0.1', port=PORT, threaded=True)
 
 
 

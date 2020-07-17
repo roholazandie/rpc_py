@@ -19,7 +19,10 @@ def hello_world():
     print("hello world")
 
 def wiki_summary(title, sentences=2, chars=0, auto_suggest=True, redirect=False):
-    return wikipedia.summary(title, sentences, chars, auto_suggest, redirect)
+    try:
+        return wikipedia.summary(title, sentences, chars, auto_suggest, redirect)
+    except:
+        return "No result"
 
 def load_client_properties(self, db, userid):
     try:
