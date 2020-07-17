@@ -1,8 +1,8 @@
 import os
 import time
 import wikipedia
-import pymongo
-from pymongo import MongoClient, IndexModel
+#import pymongo
+#from pymongo import MongoClient, IndexModel
 from flask import Flask, make_response, jsonify
 
 from xmlrpc.server import SimpleXMLRPCServer
@@ -43,24 +43,12 @@ def load_client_properties(self, db, userid):
     except Exception as e:
         print("Exception caught loading properties")
 
-def flask_app():
-    print("Initiating Flask REST Service...")  
-    app = Flask(__name__)  
-    
-    @app.route('/api/rest/v1.0/ask', methods=['POST'])
-    def ask():
-        response = make_response(jsonify({"response": proxy.wiki_summary("basketball")}))
-        print("Wiki search of basketball: {}".format(response))    
-        return None
-
-    app.run(host='0.0.0.0', port=PORT, debug=True)
 
 def register_functions(server):
     server.register_function(list_directory)
     server.register_function(is_even)
     server.register_function(hello_world)
     server.register_function(wiki_summary)
-    server.register_function(flask_app)
 
 if __name__ == "__main__":
     try:
