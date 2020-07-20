@@ -39,12 +39,7 @@ def check_sentiment(text):
 
 def get_news(sources=None, country=None):
     try:
-        url = "https://microsoft-azure-bing-news-search-v1.p.rapidapi.com/"
-
-        headers = {
-            'x-rapidapi-host': "microsoft-azure-bing-news-search-v1.p.rapidapi.com",
-            'x-rapidapi-key': "2d82bb5d95msh2a4e5c2a45a8eb3p18b00ejsn98308d90b548"
-            }
+        
             
         response = requests.request("GET", url=url, headers=headers, params=None)
         headline_dict = response.json()
@@ -55,7 +50,7 @@ def get_news(sources=None, country=None):
         return ""
 
 def get_weather():
-    api_key = 'b42dab02ba31304c08ae33bd9c63d0a4'
+    
     location = "Denver, USA"
     observation = OWM(api_key).weather_at_place(location)
     weather = observation.get_weather()
