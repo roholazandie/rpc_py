@@ -35,9 +35,14 @@ if __name__ == "__main__":
     @app.route('/sentiment', methods=['POST'])
     def ask_sentiment():
         r = request.get_json()
-        
-        print(r)
+        # print(r)
         response = make_response(jsonify({"response": proxy.check_sentiment(r["question"])}))
+        return response
+
+    @app.route('/news', methods=['POST'])
+    def ask_news():
+        r = request.get_json()
+        response = make_response(jsonify({"response": proxy.get_news()}))
         return response
 
     app.run(host='127.0.0.1', port=PORT, threaded=True)

@@ -1,13 +1,13 @@
 import os
 import time
+import requests
 import wikipedia
 import numpy as np
-#import pymongo
-#from pymongo import MongoClient, IndexModel
 from flask import Flask, make_response, jsonify
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification, TextClassificationPipeline
 from xmlrpc.server import SimpleXMLRPCServer
 from sentiment_classifier import SentimentClassifer
+from newsapi import NewsApiClient
 
 server = SimpleXMLRPCServer(('localhost', 3000), logRequests=True)
 
@@ -36,6 +36,27 @@ def check_sentiment(text):
     print("sentiment of {}: {}".format(text, sentiment))
     return sentiment
 
+def get_news(sources=None, country=None):
+    try:
+        url = "https://microsoft-azure-bing-news-search-v1.p.rapidapi.com/"
+
+        # params = {"Category":"sports"}
+
+        headers = {
+            'x-rapidapi-host': "microsoft-azure-bing-news-search-v1.p.rapidapi.com",
+            'x-rapidapi-key': "2d82bb5d95msh2a4e5c2a45a8eb3p18b00ejsn98308d90b548"
+            }
+        # print("url: {}".format(self.url))
+        # print("headers: {}".format(self.headers))
+        # print("params: {}".format(self.params))
+        response = requests.request("GET", url=url, headers=headers, params=None)
+        headline_dict = response.json()
+        headline = headline_dict['value'][0]['name']
+        print("headline: {}".format(headline))
+        return headline
+    except Exception as ex:
+        print("error getting request. {}".format(ex))
+        return ""
 
 def register_functions(server):
     server.register_function(list_directory)
@@ -43,6 +64,7 @@ def register_functions(server):
     server.register_function(hello_world)
     server.register_function(wiki_summary)
     server.register_function(check_sentiment)
+    server.register_function(get_news)
 
 if __name__ == "__main__":
     try:
