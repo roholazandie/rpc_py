@@ -45,6 +45,12 @@ if __name__ == "__main__":
         response = make_response(jsonify({"response": proxy.get_news()}))
         return response
 
+    @app.route('/weather', methods=['POST'])
+    def ask_weather():
+        r = request.get_json()
+        response = make_response(jsonify({"response": proxy.get_weather()}))
+        return response
+
     app.run(host='127.0.0.1', port=PORT, threaded=True)
 
 

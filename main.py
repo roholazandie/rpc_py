@@ -8,6 +8,7 @@ from transformers import DistilBertTokenizer, DistilBertForSequenceClassificatio
 from xmlrpc.server import SimpleXMLRPCServer
 from sentiment_classifier import SentimentClassifer
 from newsapi import NewsApiClient
+from pyowm import OWM
 
 server = SimpleXMLRPCServer(('localhost', 3000), logRequests=True)
 
@@ -40,15 +41,11 @@ def get_news(sources=None, country=None):
     try:
         url = "https://microsoft-azure-bing-news-search-v1.p.rapidapi.com/"
 
-        # params = {"Category":"sports"}
-
         headers = {
             'x-rapidapi-host': "microsoft-azure-bing-news-search-v1.p.rapidapi.com",
             'x-rapidapi-key': "2d82bb5d95msh2a4e5c2a45a8eb3p18b00ejsn98308d90b548"
             }
-        # print("url: {}".format(self.url))
-        # print("headers: {}".format(self.headers))
-        # print("params: {}".format(self.params))
+            
         response = requests.request("GET", url=url, headers=headers, params=None)
         headline_dict = response.json()
         headline = headline_dict['value'][0]['name']
@@ -58,6 +55,14 @@ def get_news(sources=None, country=None):
         print("error getting request. {}".format(ex))
         return ""
 
+def get_weather():
+    api_key = 'b42dab02ba31304c08ae33bd9c63d0a4'
+    location = "Denver, USA"
+    observation = OWM(api_key).weather_at_place(location)
+    print("weather: {}".format(observation))
+    weather = observation.get_weather()
+    return str(weather.get_temperature(unit='fahrenheit')['temp'])
+
 def register_functions(server):
     server.register_function(list_directory)
     server.register_function(is_even)
@@ -65,6 +70,7 @@ def register_functions(server):
     server.register_function(wiki_summary)
     server.register_function(check_sentiment)
     server.register_function(get_news)
+    server.register_function(get_weather)
 
 if __name__ == "__main__":
     try:
