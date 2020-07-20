@@ -9,6 +9,8 @@ from xmlrpc.server import SimpleXMLRPCServer
 from sentiment_classifier import SentimentClassifer
 from newsapi import NewsApiClient
 from pyowm import OWM
+import yaml
+from yaml import load, dump
 
 server = SimpleXMLRPCServer(('localhost', 3000), logRequests=True)
 
@@ -39,22 +41,27 @@ def check_sentiment(text):
 
 def get_news(sources=None, country=None):
     try:
-        
+        with open("api_key_config.yaml", 'r') as stream:
+            data = yaml.safe_load(stream)
+            headers = data['news']['headers']
+            url = data['news']['url']
             
-        response = requests.request("GET", url=url, headers=headers, params=None)
-        headline_dict = response.json()
-        headline = headline_dict['value'][0]['name']
-        return headline
+            response = requests.request("GET", url=url, headers=headers, params=None)
+            headline_dict = response.json()
+            headline = headline_dict['value'][0]['name']
+            return headline
     except Exception as ex:
         print("error getting request. {}".format(ex))
         return ""
 
 def get_weather():
-    
-    location = "Denver, USA"
-    observation = OWM(api_key).weather_at_place(location)
-    weather = observation.get_weather()
-    return str(weather.get_temperature(unit='fahrenheit')['temp'])
+    with open("api_key_config.yaml", 'r') as stream:
+        data = yaml.safe_load(stream)
+        api_key = data['weather']
+        location = "Denver, USA"
+        observation = OWM(api_key).weather_at_place(location)
+        weather = observation.get_weather()
+        return str(weather.get_temperature(unit='fahrenheit')['temp'])
 
 def register_functions(server):
     server.register_function(list_directory)
