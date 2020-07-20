@@ -49,7 +49,6 @@ def get_news(sources=None, country=None):
         response = requests.request("GET", url=url, headers=headers, params=None)
         headline_dict = response.json()
         headline = headline_dict['value'][0]['name']
-        print("headline: {}".format(headline))
         return headline
     except Exception as ex:
         print("error getting request. {}".format(ex))
@@ -59,7 +58,6 @@ def get_weather():
     api_key = 'b42dab02ba31304c08ae33bd9c63d0a4'
     location = "Denver, USA"
     observation = OWM(api_key).weather_at_place(location)
-    print("weather: {}".format(observation))
     weather = observation.get_weather()
     return str(weather.get_temperature(unit='fahrenheit')['temp'])
 
