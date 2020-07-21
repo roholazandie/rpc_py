@@ -41,7 +41,7 @@ def check_sentiment(text):
 
 def get_news(sources=None, country=None):
     try:
-        with open("api_key_config.yaml", 'r') as stream:
+        with open("./src/api_key_config.yaml", 'r') as stream:
             data = yaml.safe_load(stream)
             headers = data['news']['headers']
             url = data['news']['url']
@@ -55,7 +55,7 @@ def get_news(sources=None, country=None):
         return ""
 
 def get_weather():
-    with open("api_key_config.yaml", 'r') as stream:
+    with open("./src/api_key_config.yaml", 'r') as stream:
         data = yaml.safe_load(stream)
         api_key = data['weather']
         location = "Denver, USA"
