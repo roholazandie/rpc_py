@@ -37,7 +37,7 @@ libs/nltk_data/*
 bots/ryan/password.txt
 bots/tutorial/session_data/*
 pretrain_distillbert_full_sst/
-roberta/
+pretrain_roberta_model/
 api_key_config.yaml
 
 # PyInstaller

@@ -4,9 +4,9 @@ import requests
 import wikipedia
 import numpy as np
 from flask import Flask, make_response, jsonify
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification, TextClassificationPipeline
+from transformers import DistilBertTokenizer, DistilBertForSequenceClassification, RobertaTokenizer, RobertaTokenizerFast, RobertaForSequenceClassification
 from xmlrpc.server import SimpleXMLRPCServer
-from sentiment_classifier import SentimentClassifer
+from classifiers import SentimentClassifer, SemanticClassifer
 from newsapi import NewsApiClient
 from pyowm import OWM
 import yaml
@@ -38,6 +38,21 @@ def check_sentiment(text):
     sentiment_distribution = list(result.values())
     print("sentiment of {}: {}".format(text, sentiment))
     return sentiment
+
+def get_semantic_similarity(text1, text2):
+    model = RobertaForSequenceClassification.from_pretrained('./pretrain_roberta_model')
+    print("model created...")
+
+    # NOTE: This is throwing an error with the bos token
+    # tokenizer = RobertaTokenizer.from_pretrained('./pretrain_roberta_model')
+
+    tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
+    print("tokenizer created...")
+
+    semantic_similarity_classifier = SemanticClassifer(model, tokenizer)
+    result = semantic_similarity_classifier(text1, text2)
+    print("similarity score: {}".format(result))
+    return result
 
 def get_news(sources=None, country=None):
     try:
@@ -74,8 +89,16 @@ def register_functions(server):
 
 if __name__ == "__main__":
     try:
-        print('Serving...')
-        register_functions(server)
-        server.serve_forever()
+        # print('Serving...')
+        # register_functions(server)
+        # server.serve_forever()
+
+        text1 = "I like playing basketball."
+        text2 = "I like watching the NBA."
+        text3 = "Ice cream is the best!"
+
+        get_semantic_similarity(text1, text2)
+        get_semantic_similarity(text1, text3)
+        get_semantic_similarity(text1, text1)
     except KeyboardInterrupt:
         print("Exiting")
