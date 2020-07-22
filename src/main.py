@@ -14,14 +14,7 @@ from yaml import load, dump
 
 server = SimpleXMLRPCServer(('localhost', 3000), logRequests=True)
 
-def list_directory(dir):
-    return os.listdir(dir)
 
-def is_even(n):
-    return n % 2 == 0
-
-def hello_world():
-    print("hello world")
 
 def wiki_summary(title, sentences=2, chars=0, auto_suggest=True, redirect=False):
     try:
@@ -79,9 +72,6 @@ def get_weather():
         return str(weather.get_temperature(unit='fahrenheit')['temp'])
 
 def register_functions(server):
-    server.register_function(list_directory)
-    server.register_function(is_even)
-    server.register_function(hello_world)
     server.register_function(wiki_summary)
     server.register_function(check_sentiment)
     server.register_function(get_news)
