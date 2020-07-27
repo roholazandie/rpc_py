@@ -79,9 +79,7 @@ if __name__ == "__main__":
         with torch.no_grad():
             outputs = model(input_ids=input_ids, attention_mask=attention_mask)
             print("model outputs: {}".format(outputs[0].item()))
-
-       
-        # model_dir = "./libs/pretrain_roberta_model"
+            
         semantic_similarity = SemanticClassifer(model, tokenizer)
         s1 = semantic_similarity.similarity_with_concept("The computer technology is awesome", "Intel")
         s2 = semantic_similarity.similarity_with_concept("The computer technology is awesome", "dog")

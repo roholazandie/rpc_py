@@ -38,11 +38,8 @@ def check_sentiment(text):
 def get_semantic_similarity(text1, text2):
     model = RobertaForSequenceClassification.from_pretrained('./pretrain_roberta_model')
     print("model created...")
-
-    # NOTE: This is throwing an error with the bos token
+    
     tokenizer = RobertaTokenizer.from_pretrained('./pretrain_roberta_model')
-
-    # tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
     print("tokenizer created...")
 
     semantic_similarity_classifier = SemanticClassifer(model, tokenizer)
