@@ -1,5 +1,7 @@
 import torch
 import numpy as np
+from transformers import (RobertaTokenizer, RobertaForSequenceClassification, InputExample,
+                          glue_convert_examples_to_features)
 
 class SentimentClassifer:
 
@@ -22,24 +24,71 @@ class SemanticClassifer:
         self.model = model
         self.tokenizer = tokenizer
 
-    def __call__(self, text1, text2):
-        # encoded_input1 = self.tokenizer(text1, return_tensors='pt')
-        # output1 = self.model(**encoded_input1)
+    def similarity_with_concept(self, text, concept):
+        example = InputExample(guid='0', text_a=text, text_b=concept)
+        feature = glue_convert_examples_to_features(examples=[example],
+                                                    tokenizer=self.tokenizer,
+                                                    max_length=128,
+                                                    output_mode='regression',
+                                                    label_list=[None])
 
-        # encoded_input2 = self.tokenizer(text2, return_tensors='pt')
-        # output2 = self.model(**encoded_input2)
+        input_ids = torch.tensor(feature[0].input_ids).unsqueeze(0)
+        attention_mask = torch.tensor(feature[0].attention_mask).unsqueeze(0)
 
-        # similarity_score = np.inner(encoded_input1, encoded_input2)[0][0]
+        with torch.no_grad():
+            outputs = self.model(input_ids=input_ids, attention_mask=attention_mask)
 
+        return outputs[0].item()
 
+    def similarity_with_concepts(self, text, concepts):
+        examples = [InputExample(guid='0', text_a=text, text_b=concept) for concept in concepts]
+        features = glue_convert_examples_to_features(examples=examples,
+                                                     tokenizer=self.tokenizer,
+                                                     max_length=128,
+                                                     output_mode='regression',
+                                                     label_list=[None])
 
-        input_ids1 = torch.tensor(self.tokenizer.encode(text1)).unsqueeze(0)
-        outputs1 = self.model(input_ids1)
-        last_hidden_states1 = outputs1[0].detach().numpy()  # The last hidden-state is the first element of the output tuple
+        input_ids = torch.tensor([feature.input_ids for feature in features])
+        attention_mask = torch.tensor([feature.attention_mask for feature in features])
 
-        input_ids2 = torch.tensor(self.tokenizer.encode(text2)).unsqueeze(0)
-        outputs2 = self.model(input_ids2)
-        last_hidden_states2 = outputs2[0].detach().numpy()  # The last hidden-state is the first element of the output tuple
+        with torch.no_grad():
+            outputs = self.model(input_ids=input_ids, attention_mask=attention_mask)
+            outputs = outputs[0].T.tolist()[0]
 
-        similarity_score = np.inner(last_hidden_states2, last_hidden_states1)[0][0]
-        return similarity_score
+        return outputs
+
+if __name__ == "__main__":
+    try:
+        tokenizer = RobertaTokenizer.from_pretrained('./pretrain_roberta_model')
+        model = RobertaForSequenceClassification.from_pretrained('./pretrain_roberta_model')
+
+        sentence1 = "Dogs are cute."
+        sentence2 = "I need an Macbook."
+        sentence3 = "Computer technology is awesome."
+
+        example = InputExample(guid=0, text_a=sentence3, text_b=sentence2, label=0)
+        feature = glue_convert_examples_to_features(examples=[example],
+                                                    tokenizer=tokenizer,
+                                                    max_length=128,
+                                                    output_mode='regression',
+                                                    label_list=[None])
+
+        input_ids = torch.tensor(feature[0].input_ids).unsqueeze(0)
+        attention_mask = torch.tensor(feature[0].attention_mask).unsqueeze(0)
+
+        with torch.no_grad():
+            outputs = model(input_ids=input_ids, attention_mask=attention_mask)
+            print("model outputs: {}".format(outputs[0].item()))
+
+       
+        # model_dir = "./libs/pretrain_roberta_model"
+        semantic_similarity = SemanticClassifer(model, tokenizer)
+        s1 = semantic_similarity.similarity_with_concept("The computer technology is awesome", "Intel")
+        s2 = semantic_similarity.similarity_with_concept("The computer technology is awesome", "dog")
+        print("semantics similarity scores: {}, {}".format(s1, s2))
+
+        ss = semantic_similarity.similarity_with_concepts("The computer technology is awesome",
+                                                        ["dogs", "peperoni", "Intel"])
+        print("semantics similarity scores: {}".format(ss))
+    except KeyboardInterrupt:
+        print("Exiting")

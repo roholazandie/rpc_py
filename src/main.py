@@ -4,13 +4,16 @@ import requests
 import wikipedia
 import numpy as np
 from flask import Flask, make_response, jsonify
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification, RobertaTokenizer, RobertaTokenizerFast, RobertaForSequenceClassification
+from transformers import (RobertaTokenizer, RobertaForSequenceClassification, InputExample,
+                          glue_convert_examples_to_features, DistilBertTokenizer, DistilBertForSequenceClassification)
 from xmlrpc.server import SimpleXMLRPCServer
 from classifiers import SentimentClassifer, SemanticClassifer
 from newsapi import NewsApiClient
 from pyowm import OWM
 import yaml
 from yaml import load, dump
+import torch 
+
 
 server = SimpleXMLRPCServer(('localhost', 3000), logRequests=True)
 
@@ -37,9 +40,9 @@ def get_semantic_similarity(text1, text2):
     print("model created...")
 
     # NOTE: This is throwing an error with the bos token
-    # tokenizer = RobertaTokenizer.from_pretrained('./pretrain_roberta_model')
+    tokenizer = RobertaTokenizer.from_pretrained('./pretrain_roberta_model')
 
-    tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
+    # tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
     print("tokenizer created...")
 
     semantic_similarity_classifier = SemanticClassifer(model, tokenizer)
@@ -79,16 +82,8 @@ def register_functions(server):
 
 if __name__ == "__main__":
     try:
-        # print('Serving...')
-        # register_functions(server)
-        # server.serve_forever()
-
-        text1 = "I like playing basketball."
-        text2 = "I like watching the NBA."
-        text3 = "Ice cream is the best!"
-
-        get_semantic_similarity(text1, text2)
-        get_semantic_similarity(text1, text3)
-        get_semantic_similarity(text1, text1)
+        print('Serving...')
+        register_functions(server)
+        server.serve_forever()
     except KeyboardInterrupt:
         print("Exiting")
