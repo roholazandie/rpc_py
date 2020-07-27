@@ -46,7 +46,7 @@ def get_semantic_similarity(text1, text2):
     print("tokenizer created...")
 
     semantic_similarity_classifier = SemanticClassifer(model, tokenizer)
-    result = semantic_similarity_classifier(text1, text2)
+    result = semantic_similarity_classifier.similarity_with_concept(text1, text2)
     print("similarity score: {}".format(result))
     return result
 
@@ -79,6 +79,7 @@ def register_functions(server):
     server.register_function(check_sentiment)
     server.register_function(get_news)
     server.register_function(get_weather)
+    server.register_function(get_semantic_similarity)
 
 if __name__ == "__main__":
     try:

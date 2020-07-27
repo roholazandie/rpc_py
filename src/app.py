@@ -24,6 +24,12 @@ if __name__ == "__main__":
         response = make_response(jsonify({"response": proxy.check_sentiment(r["question"])}))
         return response
 
+    @app.route('/similarity', methods=['POST'])
+    def ask_similarity():
+        r = request.get_json()
+        response = make_response(jsonify({"response": proxy.get_semantic_similarity(r['text'], r['concept'])}))
+        return response
+
     @app.route('/news', methods=['POST'])
     def ask_news():
         r = request.get_json()
