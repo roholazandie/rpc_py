@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 from transformers import (RobertaTokenizer, RobertaForSequenceClassification, InputExample,
-                          glue_convert_examples_to_features)
+                          glue_convert_examples_to_features, pipeline)
 
 class SentimentClassifer:
 
@@ -56,6 +56,10 @@ class SemanticClassifer:
             outputs = outputs[0].T.tolist()[0]
 
         return outputs
+
+class Summarization:
+    def __init__(self):
+        pass
 
 if __name__ == "__main__":
     try:
