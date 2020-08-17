@@ -24,10 +24,16 @@ if __name__ == "__main__":
         response = make_response(jsonify({"response": server.check_sentiment(r["question"])}))
         return response
 
-    @app.route('/similarity', methods=['POST'])
-    def ask_similarity():
+    @app.route('/similarity_concept', methods=['POST'])
+    def ask_similarity_concept():
         r = request.get_json()
-        response = make_response(jsonify({"response": server.get_semantic_similarity(r['text'], r['concept'])}))
+        response = make_response(jsonify({"response": server.get_semantic_similarity_concept(r['text'], r['concept'])}))
+        return response
+
+    @app.route('/similarity_concepts', methods=['POST'])
+    def ask_similarity_concepts():
+        r = request.get_json()
+        response = make_response(jsonify({"response": server.get_semantic_similarity_concepts(r['text'], r['concepts'])}))
         return response
 
     @app.route('/news', methods=['POST'])

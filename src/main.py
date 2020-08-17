@@ -21,18 +21,23 @@ server = SimpleXMLRPCServer(('localhost', 3000), logRequests=True)
 class SemanticSimilarity:
 
     def __init__(self):
-        self.model = RobertaForSequenceClassification.from_pretrained('/home/rohola/codes/program-r/libs/pretrain_roberta_model')
+        self.model = RobertaForSequenceClassification.from_pretrained('./pretrain_roberta_model')
         print("model created...")
 
-        self.tokenizer = RobertaTokenizer.from_pretrained('/home/rohola/codes/program-r/libs/pretrain_roberta_model')
+        self.tokenizer = RobertaTokenizer.from_pretrained('./pretrain_roberta_model')
         print("tokenizer created...")
 
-    def get_semantic_similarity(self, text1, text2):
+    def get_semantic_similarity_concept(self, text1, concept):
         semantic_similarity_classifier = SemanticClassifer(self.model, self.tokenizer)
-        result = semantic_similarity_classifier.similarity_with_concept(text1, text2)
+        result = semantic_similarity_classifier.similarity_with_concept(text1, concept)
         print("similarity score: {}".format(result))
         return result
 
+    def get_semantic_similarity_concepts(self, text1, concepts):
+        semantic_similarity_classifier = SemanticClassifer(self.model, self.tokenizer)
+        result = semantic_similarity_classifier.similarity_with_concepts(text1, concepts)
+        print("similarity score: {}".format(result))
+        return result
 
 def wiki_summary(title, sentences=2, chars=0, auto_suggest=True, redirect=False):
     try:
