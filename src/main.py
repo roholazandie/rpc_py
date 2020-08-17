@@ -18,6 +18,21 @@ import torch
 server = SimpleXMLRPCServer(('localhost', 3000), logRequests=True)
 
 
+class SemanticSimilarity:
+
+    def __init__(self):
+        self.model = RobertaForSequenceClassification.from_pretrained('/home/rohola/codes/program-r/libs/pretrain_roberta_model')
+        print("model created...")
+
+        self.tokenizer = RobertaTokenizer.from_pretrained('/home/rohola/codes/program-r/libs/pretrain_roberta_model')
+        print("tokenizer created...")
+
+    def get_semantic_similarity(self, text1, text2):
+        semantic_similarity_classifier = SemanticClassifer(self.model, self.tokenizer)
+        result = semantic_similarity_classifier.similarity_with_concept(text1, text2)
+        print("similarity score: {}".format(result))
+        return result
+
 
 def wiki_summary(title, sentences=2, chars=0, auto_suggest=True, redirect=False):
     try:
@@ -35,17 +50,7 @@ def check_sentiment(text):
     print("sentiment of {}: {}".format(text, sentiment))
     return sentiment
 
-def get_semantic_similarity(text1, text2):
-    model = RobertaForSequenceClassification.from_pretrained('./pretrain_roberta_model')
-    print("model created...")
-    
-    tokenizer = RobertaTokenizer.from_pretrained('./pretrain_roberta_model')
-    print("tokenizer created...")
 
-    semantic_similarity_classifier = SemanticClassifer(model, tokenizer)
-    result = semantic_similarity_classifier.similarity_with_concept(text1, text2)
-    print("similarity score: {}".format(result))
-    return result
 
 def get_news(sources=None, country=None):
     try:
@@ -76,7 +81,8 @@ def register_functions(server):
     server.register_function(check_sentiment)
     server.register_function(get_news)
     server.register_function(get_weather)
-    server.register_function(get_semantic_similarity)
+    server.register_instance(SemanticSimilarity())
+
 
 if __name__ == "__main__":
     try:

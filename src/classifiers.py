@@ -63,8 +63,8 @@ class Summarization:
 
 if __name__ == "__main__":
     try:
-        tokenizer = RobertaTokenizer.from_pretrained('./pretrain_roberta_model')
-        model = RobertaForSequenceClassification.from_pretrained('./pretrain_roberta_model')
+        tokenizer = RobertaTokenizer.from_pretrained('/home/rohola/codes/program-r/libs/pretrain_roberta_model')
+        model = RobertaForSequenceClassification.from_pretrained('/home/rohola/codes/program-r/libs/pretrain_roberta_model')
 
         sentence1 = "Dogs are cute."
         sentence2 = "I need an Macbook."
