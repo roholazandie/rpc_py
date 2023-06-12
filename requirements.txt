@@ -1,7 +1,7 @@
 wikipedia
 flask
 pymongo==3.10.1
-transformers==3.0.2
+transformers==4.30.0
 torch==1.5.1
 newsapi-python
 pyowm==2.10.0 
